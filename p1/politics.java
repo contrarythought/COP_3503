@@ -81,7 +81,6 @@ public class politics {
 
             }
 
-            System.out.println();
             nCandidates = stdin.nextInt();
             nSupporters = stdin.nextInt();
 
