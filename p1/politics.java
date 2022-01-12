@@ -21,15 +21,45 @@ public class politics {
             }
 
             // read in supporters and the candidates they support
-            ArrayList<String[]> supporters = new ArrayList<String[]>();
+            ArrayList<Supporter> supporters = new ArrayList<Supporter>();
             System.out.println("nSupr: " + nSupporters);
             for(i = 0; i < nSupporters; i++) {
 
-                String[] SupCan = new String[2];
-                SupCan[0] = stdin.next(); // read in supporter
-                SupCan[1] = stdin.next(); // read in candidate 
+                String name = stdin.next();
+                String candidate = stdin.next();
+                supporters.add(new Supporter(name, candidate));
 
-                supporters.add(SupCan);
+            }
+
+            ArrayList<Supporter> writeIn = new ArrayList<Supporter>();
+            int j, k;
+            for(i = 0; i < nCandidates; i++) {
+                
+                for(j = 0; j < nSupporters; j++) {
+                    
+                    boolean hasCandidate = false;
+                    for(k = 0; k < nCandidates; k++) {
+
+                        if(supporters.get(j).getCandidate().equals(candidates.get(k))) {
+
+                            hasCandidate = true;
+                            break;
+
+                        }
+
+                    }
+
+                    if(hasCandidate == false) {
+
+                        writeIn.add(supporters.get(j));
+
+                    } else if(supporters.get(j).getCandidate().equals(candidates.get(i))) {
+
+                        System.out.println(supporters.get(j).getName());
+
+                    }
+
+                }
 
             }
 
@@ -40,4 +70,19 @@ public class politics {
 
         stdin.close();
     }
+}
+
+class Supporter {
+    
+    private String name;
+    private String candidate;
+
+    public Supporter(String name, String candidate) {
+        this.name = name;
+        this.candidate = candidate;
+    }
+
+    public String getCandidate() {return candidate;}
+    public String getName() {return name;}
+
 }
