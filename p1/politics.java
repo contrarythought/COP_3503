@@ -22,7 +22,6 @@ public class politics {
 
             // read in supporters and the candidates they support
             ArrayList<Supporter> supporters = new ArrayList<Supporter>();
-            System.out.println("nSupr: " + nSupporters);
             for(i = 0; i < nSupporters; i++) {
 
                 String name = stdin.next();
@@ -31,7 +30,8 @@ public class politics {
 
             }
 
-            ArrayList<Supporter> writeIn = new ArrayList<Supporter>();
+            // print out supporters who have candidates on the candidate list, and read in the write in supporter/candidate pairs into writeIn
+            ArrayList<String> writeIn = new ArrayList<String>();
             int j, k;
             for(i = 0; i < nCandidates; i++) {
                 
@@ -50,8 +50,12 @@ public class politics {
                     }
 
                     if(hasCandidate == false) {
+                        
+                        if(!writeIn.contains(supporters.get(j).getCandidate())) {
 
-                        writeIn.add(supporters.get(j));
+                            writeIn.add(supporters.get(j).getCandidate());
+
+                        }
 
                     } else if(supporters.get(j).getCandidate().equals(candidates.get(i))) {
 
@@ -63,6 +67,21 @@ public class politics {
 
             }
 
+            for(i = 0; i < writeIn.size(); i++) {
+
+                for(j = 0; j < supporters.size(); j++) {
+
+                    if(supporters.get(j).getCandidate().equals(writeIn.get(i))) {
+
+                        System.out.println(supporters.get(j).getName());
+
+                    }
+
+                }
+
+            }
+
+            System.out.println();
             nCandidates = stdin.nextInt();
             nSupporters = stdin.nextInt();
 
