@@ -1,106 +1,101 @@
+/* 
+    Anthony Thorpe
+    COP_3503 Arup Guha
+    1/18/2022
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.TreeMap;
 
 public class politics {
-    public static void main(String[] args) {
-        Scanner stdin = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        int nCandidates = stdin.nextInt();
-        int nSupporters = stdin.nextInt();
+        String[] numCandidatesSupporters = reader.readLine().split(" ");
+        int nCandidates = Integer.parseInt(numCandidatesSupporters[0]);
+        int nSupporters = Integer.parseInt(numCandidatesSupporters[1]);
 
         while(nCandidates != 0) {
-
             ArrayList<String> candidates = new ArrayList<String>();
-            
-            // read in the candidate names
+        
+            // read in the candidates
             int i;
             for(i = 0; i < nCandidates; i++) {
-
-                candidates.add(stdin.next());
-
+                String candidate = reader.readLine();
+                candidates.add(candidate);
             }
 
-            // read in supporters and the candidates they support
-            ArrayList<Supporter> supporters = new ArrayList<Supporter>();
+            TreeMap<Supporter, String> supporters = new TreeMap<Supporter, String>();
+            // read in supporter/candidate pairs
             for(i = 0; i < nSupporters; i++) {
-
-                String name = stdin.next();
-                String candidate = stdin.next();
-                supporters.add(new Supporter(name, candidate));
-
+                String[] supporterCandidate = reader.readLine().split(" ");
+                supporters.put(new Supporter(supporterCandidate[0], supporterCandidate[1], i), supporterCandidate[1]);
             }
-
-            // print out supporters who have candidates on the candidate list, and read in the write in supporter/candidate pairs into writeIn
-            ArrayList<String> writeIn = new ArrayList<String>();
-            int j, k;
-            for(i = 0; i < nCandidates; i++) {
-                
-                for(j = 0; j < nSupporters; j++) {
-                    
-                    boolean hasCandidate = false;
-                    for(k = 0; k < nCandidates; k++) {
-
-                        if(supporters.get(j).getCandidate().equals(candidates.get(k))) {
-
-                            hasCandidate = true;
-                            break;
-
-                        }
-
-                    }
-
-                    if(hasCandidate == false) {
-                        
-                        if(!writeIn.contains(supporters.get(j).getCandidate())) {
-
-                            writeIn.add(supporters.get(j).getCandidate());
-
-                        }
-
-                    } else if(supporters.get(j).getCandidate().equals(candidates.get(i))) {
-
-                        System.out.println(supporters.get(j).getName());
-
-                    }
-
+            
+            // read out the supporters who support the listed candidates
+            for(i = 0; i < candidates.size(); i++) {
+                for(Supporter s : supporters.keySet()) {
+                    if(candidates.get(i).equals(supporters.get(s))) {
+                        System.out.println(s.getSupporter());
+                    } 
                 }
-
             }
 
-            for(i = 0; i < writeIn.size(); i++) {
-
-                for(j = 0; j < supporters.size(); j++) {
-
-                    if(supporters.get(j).getCandidate().equals(writeIn.get(i))) {
-
-                        System.out.println(supporters.get(j).getName());
-
-                    }
-
+            // read in the supporters who support written in candidates
+            ArrayList<String> writeInCandidates = new ArrayList<String>();
+            ArrayList<Supporter> writeInSupporters = new ArrayList<Supporter>(); 
+            for(Supporter s : supporters.keySet()) {
+                boolean in = false;
+                for(i = 0; i < candidates.size(); i++) {
+                    if(supporters.get(s).equals(candidates.get(i)))
+                        in = true;
                 }
-
+                if(in == false) {
+                    if(!writeInCandidates.contains(s.getCandidate())) {
+                        writeInCandidates.add(supporters.get(s));
+                    }
+                    writeInSupporters.add(s);
+                }
+            }
+            
+            // read out the supporters who support written in candidates
+            int j;
+            for(i = 0; i < writeInCandidates.size(); i++) {
+                for(j = 0; j < writeInSupporters.size(); j++) {
+                    if(writeInSupporters.get(j).getCandidate().equals(writeInCandidates.get(i))) {
+                        System.out.println(writeInSupporters.get(j).getSupporter());
+                    }
+                } 
             }
 
-            nCandidates = stdin.nextInt();
-            nSupporters = stdin.nextInt();
+            numCandidatesSupporters = reader.readLine().split(" ");
+            nCandidates = Integer.parseInt(numCandidatesSupporters[0]);
+            nSupporters = Integer.parseInt(numCandidatesSupporters[1]);
 
         }
-
-        stdin.close();
     }
 }
 
-class Supporter {
-    
-    private String name;
+class Supporter implements Comparable<Supporter> {
+    private String supporter;
     private String candidate;
+    private int ID;
 
-    public Supporter(String name, String candidate) {
-        this.name = name;
+    public Supporter(String supporter, String candidate, int ID) {
+        this.supporter = supporter;
         this.candidate = candidate;
+        this.ID = ID;
     }
 
-    public String getCandidate() {return candidate;}
-    public String getName() {return name;}
+    public int compareTo(Supporter other) {
+        return this.ID - other.ID;
+    }
 
+    public String getSupporter() {return supporter;}
+    public String getCandidate() {return candidate;}
+    public int getID() {return ID;}
+    public String toString() {return supporter;}
 }
