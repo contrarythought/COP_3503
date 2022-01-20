@@ -29,10 +29,18 @@ public class tentaizu {
 
             }
 
+            // analyze and generate completed board
+            solve(board, 0, 0);               
+
             // read in the separator
             String sep = reader.readLine();
 
         }
+
+    }
+    
+    // TODO
+    public void solve(String[][] board, int row, int col) {
 
     }
 
