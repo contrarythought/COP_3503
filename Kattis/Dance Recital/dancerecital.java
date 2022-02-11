@@ -28,26 +28,41 @@ public class dancerecital {
         used = new boolean[numRoutines];
         findMin(routines, new String[numRoutines], numRoutines, 0, 0);
         int result = pQueue.poll();
+        System.out.println(result);
     }
 
     public static void findMin(ArrayList<ArrayList<String>> routines, String[] routPerm, int numRoutines, int k, int count) {
         if(k == numRoutines) {
-            pQueue.add()
+            pQueue.add(count);
+            return;
         }
+        
+        int tmpCount = 0;
         for(int i = 0; i < numRoutines; i++) {
-            if(used[k]) continue;
+            if(used[i]) continue;
             
-            if(k > 0 && routPerm[k - 1] != "") {
+            // count duplicate dancers in adjacent routines
+            if(k > 0) {
                 int z;
-                for(z = 0; z < Integer.max(routPerm[k - 1].length(), routines.get(k).size()); z++) {
-
+                for(z = 0; z < routPerm[k - 1].length(); z++) {
+                    for(int j = 0; j < routines.get(k).size(); j++) {
+                        if(routPerm[k - 1].charAt(z) == routines.get(k).get(j).charAt(j)) {
+                            tmpCount++;
+                        }
+                    }
                 }
             }
+
+            // place a routine in the array of routines
             for(int j = 0; j < routines.get(i).size(); j++) {
-                routPerm[j] = routines.get(i).get(j);
+                routPerm[k] = routines.get(i).get(j);
             }
 
             used[k] = true;
+
+            findMin(routines, routPerm, numRoutines, k + 1, count + tmpCount);
+
+
 
         }
     }
