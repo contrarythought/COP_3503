@@ -16,11 +16,9 @@ public class dancerecital {
         ArrayList<String> routine;
         String[] input = new String[numRoutines];
         for(int i = 0; i < numRoutines; i++) {
-            input = reader.readLine().split("");
+            input[i] = reader.readLine();
             routine = new ArrayList<String>();
-            for(int j = 0; j < input.length; j++) {
-                routine.add(input[j]);
-            }
+            routine.add(input[i]);
             routines.add(routine);
         }
 
@@ -52,7 +50,7 @@ public class dancerecital {
                     }
                 }
             }
-
+            
             // place a routine in the array of routines
             for(int j = 0; j < routines.get(i).size(); j++) {
                 routPerm[k] = routines.get(i).get(j);
@@ -62,8 +60,10 @@ public class dancerecital {
 
             findMin(routines, routPerm, numRoutines, k + 1, count + tmpCount);
 
+            // not sure if right
+            used[k] = false;
 
-
+            
         }
     }
 }
