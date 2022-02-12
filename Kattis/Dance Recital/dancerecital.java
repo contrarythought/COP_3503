@@ -1,69 +1,66 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.PriorityQueue;
 
 public class dancerecital {
     public static PriorityQueue<Integer> pQueue;
-    public static boolean[] used;
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         
         int numRoutines = Integer.parseInt(reader.readLine());
 
-        ArrayList<ArrayList<String>> routines = new ArrayList<ArrayList<String>>();
-        ArrayList<String> routine;
-        String[] input = new String[numRoutines];
+        String[] routines = new String[numRoutines];
+        String input;
         for(int i = 0; i < numRoutines; i++) {
-            input[i] = reader.readLine();
-            routine = new ArrayList<String>();
-            routine.add(input[i]);
-            routines.add(routine);
+            input = reader.readLine();
+            routines[i] = input;
         }
-
+        
+        for(int i = 0; i < routines.length; i++) {
+            System.out.println(routines[i]);
+        }
         pQueue = new PriorityQueue<Integer>();
-        used = new boolean[numRoutines];
-        findMin(routines, new String[numRoutines], numRoutines, 0, 0);
+        findMin(routines, numRoutines, 0, routines.length - 1, 0);
         int result = pQueue.poll();
         System.out.println(result);
     }
 
-    public static void findMin(ArrayList<ArrayList<String>> routines, String[] routPerm, int numRoutines, int k, int count) {
-        if(k == numRoutines) {
-            pQueue.add(count);
+    public static void findMin(String[] routines, int numRoutines, int start, int end, int count) {
+        if(start == end) {
+            System.out.println(routines);
+            //pQueue.add(count);
             return;
+        }        
+
+        int tmpCount = 0;
+        for(int i = start; i <= end; i++) {
+           // if(start > 0) tmpCount = countAdjacent(routines, start, start - 1);
+            swap(routines, start, i);
+            findMin(routines, numRoutines, start + 1, end, count + tmpCount);
+        }
+    }
+
+    public static int countAdjacent(String[] routines, int before, int current) {
+        HashSet<Character> setBefore = new HashSet<Character>();
+        
+        int result = 0;
+        for(int i = 0; i < routines[before].length(); i++) {
+            setBefore.add(routines[before].charAt(i));
+        }
+
+        for(int i = 0; i < routines[current].length(); i++) {
+            if(setBefore.contains(routines[current].charAt(i))) result++;
         }
         
-        int tmpCount = 0;
-        for(int i = 0; i < numRoutines; i++) {
-            if(used[i]) continue;
-            
-            // count duplicate dancers in adjacent routines
-            if(k > 0) {
-                int z;
-                for(z = 0; z < routPerm[k - 1].length(); z++) {
-                    for(int j = 0; j < routines.get(k).size(); j++) {
-                        if(routPerm[k - 1].charAt(z) == routines.get(k).get(j).charAt(j)) {
-                            tmpCount++;
-                        }
-                    }
-                }
-            }
-            
-            // place a routine in the array of routines
-            for(int j = 0; j < routines.get(i).size(); j++) {
-                routPerm[k] = routines.get(i).get(j);
-            }
+        return result;
+    }
 
-            used[k] = true;
-
-            findMin(routines, routPerm, numRoutines, k + 1, count + tmpCount);
-
-            // not sure if right
-            used[k] = false;
-
-            
-        }
+    public static void swap(String[] routines, int start, int i) {
+        String tmp;
+        tmp = routines[i];
+        routines[i] = routines[start];
+        routines[start] = tmp;
     }
 }
