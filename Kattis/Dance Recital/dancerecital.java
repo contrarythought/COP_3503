@@ -23,13 +23,16 @@ public class dancerecital {
         }
         pQueue = new PriorityQueue<Integer>();
         findMin(routines, numRoutines, 0, routines.length - 1, 0);
-        int result = pQueue.poll();
-        System.out.println(result);
+       // int result = pQueue.poll();
+        //System.out.println(result);
     }
 
     public static void findMin(String[] routines, int numRoutines, int start, int end, int count) {
         if(start == end) {
-            System.out.println(routines);
+            for(int i = 0; i < routines.length; i++) {
+                System.out.print(routines[i] + " ");
+            }
+            System.out.println();
             //pQueue.add(count);
             return;
         }        
@@ -39,6 +42,7 @@ public class dancerecital {
            // if(start > 0) tmpCount = countAdjacent(routines, start, start - 1);
             swap(routines, start, i);
             findMin(routines, numRoutines, start + 1, end, count + tmpCount);
+            swap(routines, start, i);
         }
     }
 
