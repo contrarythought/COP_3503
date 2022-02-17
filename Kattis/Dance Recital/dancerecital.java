@@ -1,11 +1,11 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.PriorityQueue;
 
 public class dancerecital {
-    public static PriorityQueue<Integer> pQueue;
+    public static boolean[] used;
+    public static String[] routinePerms;
+    public static int min = Integer.MAX_VALUE;
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         
@@ -18,84 +18,42 @@ public class dancerecital {
             routines[i] = input;
         }
         
-        /*
-        for(int i = 0; i < routines.length; i++) {
-            System.out.println(routines[i]);
-        }
-        */
-        pQueue = new PriorityQueue<Integer>();
-        findMin(routines, numRoutines, 0, routines.length - 1, 0);
-        int result = pQueue.poll();
-        System.out.println(result);
+        used = new boolean[numRoutines];
+        routinePerms = new String[numRoutines];
+        System.out.println(findMin(routines, numRoutines, 0, numRoutines - 1, 0));
     }
 
-    /*
-    public static int countAdj(String[] routines) {
-        HashSet<Character> set; 
-        int total = 0;
-        for(int i = 1; i < routines.length; i++) {
-            set = new HashSet<Character>();
-            for(int j = 0; j < routines[i - 1].length(); j++) {
-                set.add(routines[i - 1].charAt(j));
-            }
-            for(int k = 0; k < routines[i].length(); k++) {
-                if(set.contains(routines[i].charAt(k))) total++;
-            }
+    public static int findMin(String[] routines, int numRoutines, int start, int end, int count) {
+        if(start == numRoutines) {
+            return count;
         }
-        return total;
-    }
-    */
 
-    public static void findMin(String[] routines, int numRoutines, int start, int end, int count) {
-        if(start == end) {
-            System.out.println("\t*****ADDING " + count + " TO PQ*****");
-            System.out.print("\t"); 
-            for(int i = 0; i < routines.length; i++) {
-                System.out.print(routines[i] + " ");
-            }
-            System.out.println();
-            
-            
-            
-            pQueue.add(count);
-            return;
-        }        
-
+        // stores count from prev function call, so that i don't have to call countAdj() again to decrement count popping from stack
         int tmpCount = 0;
-        for(int i = start; i <= end; i++) {
-            if(start > 0) tmpCount = countAdjacent(routines, start, start - 1);
-            swap(routines, start, i);
-            //if(start > 0) tmpCount = countAdjacent(routines, start, start - 1);
-            findMin(routines, numRoutines, start + 1, end, count + tmpCount);
-            swap(routines, start, i); // i need this swap to restore original state of routines because the stack does NOT save the state of routines (changes in routines
-            // are kept throughout the pushing and popping of stack frames)
+        for(int i = 0; i < numRoutines; i++) {
+            if(used[i]) continue;
+            routinePerms[start] = routines[i];
+            used[i] = true;
+            if(start > 0) tmpCount = countAdjacent(routinePerms, start - 1, start);
+            count += tmpCount; 
+
+            // finds the minimum between MAX_INT and a final permutation
+            min = Math.min(min, findMin(routines, numRoutines, start + 1, end, count));
+            
+            used[i] = false;
+            if(start > 0) count -= tmpCount; 
         }
+
+        return min;
     }
 
+    // counts number of repetitions between two adjacent routines
     public static int countAdjacent(String[] routines, int before, int current) {
-        HashSet<Character> setBefore = new HashSet<Character>();
-        
-        System.out.println("Comparing " + routines[before] + " and " + routines[current]);
-
         int result = 0;
         for(int i = 0; i < routines[before].length(); i++) {
-            setBefore.add(routines[before].charAt(i));
+            if(routines[current].indexOf(routines[before].charAt(i)) != -1) result++;
         }
 
-        for(int i = 0; i < routines[current].length(); i++) {
-            if(setBefore.contains(routines[current].charAt(i))) {
-                result++;        
-            }
-        }
-        
-        System.out.println(result + " in common");
         return result;
-    }
-
-    public static void swap(String[] routines, int start, int i) {
-        String tmp;
-        tmp = routines[i];
-        routines[i] = routines[start];
-        routines[start] = tmp;
     }
 }
